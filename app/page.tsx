@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Question = {id:number;subject:string;topic:string;year:string;difficulty:string;question:string;options:string[];answer:number;explanation:string};
 const questions:Question[]=[
@@ -14,7 +14,7 @@ const questions:Question[]=[
 const subjects=[{name:"Polity",progress:50,color:"#5575e8"},{name:"Ancient & Modern History",progress:50,color:"#17a078"},{name:"Economy",progress:1,color:"#d89a3e"},{name:"Physics & Chemistry",progress:0,color:"#8c70d9"},{name:"Geography",progress:0,color:"#2996b8"},{name:"Environment",progress:0,color:"#67a56c"}];
 type Attempt={id:number;subject:string;topic:string;correct:boolean;date:string;question:string};
 export default function Home(){
- const [page,setPage]=useState("Dashboard"),[subject,setSubject]=useState("All Subjects"),[difficulty,setDifficulty]=useState("All Levels"),[year,setYear]=useState("All Years"),[qIndex,setQIndex]=useState(0),[selected,setSelected]=useState<number|null>(null),[submitted,setSubmitted]=useState(false),[attempts,setAttempts]=useState<Attempt[]>([]),[bookmarks,setBookmarks]=useState<number[]>([]),[filter,setFilter]=useState("All");
+ const [page,setPage]=useState("Dashboard"),[subject,setSubject]=useState("All Subjects"),[difficulty,setDifficulty]=useState("All Levels"),[year,setYear]=useState("All Years"),[qIndex,setQIndex]=useState(0),[selected,setSelected]=useState<number|null>(null),[submitted,setSubmitted]=useState(false),[attempts,setAttempts]=useState<Attempt[]>([]),[bookmarks,setBookmarks]=useState<number[]>([]),[filter,setFilter]=useState("All"),[hydrated,setHydrated]=useState(false);\n useEffect(()=>{try{const saved=localStorage.getItem("upsc-edge-progress-v1");if(saved){const data=JSON.parse(saved);if(Array.isArray(data.attempts))setAttempts(data.attempts);if(Array.isArray(data.bookmarks))setBookmarks(data.bookmarks)}}catch{localStorage.removeItem("upsc-edge-progress-v1")}finally{setHydrated(true)}},[]);\n useEffect(()=>{if(hydrated)localStorage.setItem("upsc-edge-progress-v1",JSON.stringify({attempts,bookmarks,updatedAt:new Date().toISOString()}))},[attempts,bookmarks,hydrated]);
  const filtered=useMemo(()=>questions.filter(q=>(subject==="All Subjects"||q.subject===subject)&&(difficulty==="All Levels"||q.difficulty===difficulty)&&(year==="All Years"||q.year===year)),[subject,difficulty,year]);
  const q=filtered[qIndex%Math.max(filtered.length,1)];
  const startQuiz=()=>{setPage("Practice");setQIndex(0);setSelected(null);setSubmitted(false)};
