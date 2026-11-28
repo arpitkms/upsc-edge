@@ -24,16 +24,18 @@ export async function updateSession(request: NextRequest) {
 
   const { data: claimsData } = await supabase.auth.getClaims();
   const claims = claimsData?.claims;
-  const isPublic = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/auth");
-  if (!claims && !isPublic) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
-    return NextResponse.redirect(redirectUrl);
-  }
-  if (claims && request.nextUrl.pathname === "/login") {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/";
-    return NextResponse.redirect(redirectUrl);
-  }
+  const pathname = request.nextUrl.pathname;
+  const isPublic = pathname.startsWith("/login") || pathname.startsWith("/auth");
+
+  // The app runs behind the AIC reverse proxy. Build redirects from the
+  // externally forwarded host/protocol, never Next.js internal localhost URL.
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const host = forwardedHost || request.headers.get("host") || request.nextUrl.host;
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const protocol = forwardedProto || request.nextUrl.protocol.replace(":", "") || "https";
+  const redirectTo = (path: string) => NextResponse.redirect(new URL(path, `${protocol}://${host}`));
+
+  if (!claims && !isPublic) return redirectTo("/login");
+  if (claims && pathname === "/login") return redirectTo("/");
   return response;
 }
