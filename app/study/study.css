@@ -131,3 +131,37 @@
 .theme-dark .nested-topic-row>button:first-child{color:#dce6f7}
 .theme-dark .nested-topic-row>span{color:#9aabc4}
 @media(max-width:680px){.nested-topic-list{margin-left:34px;padding-left:8px}.nested-topic-row{gap:5px;padding:7px 6px}.nested-topic-row>button:first-child{font-size:10px}.nested-topic-row>span{font-size:9px}.nested-topic-row>button:last-child{font-size:9px;padding:6px 7px}}
+
+/* Exam provenance badges and compact mobile quiz layout */
+.exam-attribution-label{display:inline-flex;align-items:center;max-width:100%;min-width:0;padding:8px 12px;border:1px solid #dbe5f5;border-radius:10px;background:#f7f9ff;color:#405b91;font-size:11px;font-weight:800;line-height:1.35;overflow-wrap:anywhere}
+.practice-kind-label{background:#eef2ff!important;color:#405fd1!important}
+.quiz-label-row .difficulty-label{flex-shrink:0}
+.quiz-label-row .quiz-clock{margin-left:auto;white-space:nowrap}
+.theme-dark .exam-attribution-label{background:#1a2b46;border-color:#334a6c;color:#c5d5f2}
+@media(max-width:680px){
+  .quiz-view{max-width:100%;width:100%;padding:12px 14px calc(125px + env(safe-area-inset-bottom));box-sizing:border-box}
+  .quiz-toolbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:9px;margin:2px 0 18px;min-width:0}
+  .quiz-toolbar>button{min-width:0;white-space:nowrap}
+  .quiz-toolbar>button:first-child{font-size:16px;padding:8px 2px}
+  .quiz-toolbar>button:first-child span{font-size:12px}
+  .quiz-toolbar>button.end-test-button{display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:max-content;max-width:none;white-space:nowrap;writing-mode:horizontal-tb;word-break:normal;overflow-wrap:normal;font-size:11px;padding:9px 10px;line-height:1.2}
+  .quiz-meter{display:flex;align-items:center;gap:7px;min-width:0}
+  .quiz-meter>div{min-width:0;flex:1}
+  .quiz-meter>b{font-size:12px;white-space:nowrap}
+  .quiz-label-row{display:flex;align-items:center;gap:7px;margin:0 0 13px;min-width:0}
+  .mcq-label,.exam-attribution-label,.difficulty-label{font-size:10px;padding:7px 9px;border-radius:9px}
+  .exam-attribution-label{flex:1 1 145px;min-width:0}
+  .quiz-breadcrumb{order:5;flex:1 0 100%;font-size:10px;white-space:normal;line-height:1.4;overflow-wrap:anywhere}
+  .quiz-label-row .quiz-clock{margin-left:auto;font-size:10px}
+  .question-card{padding:19px 17px;margin-bottom:13px;border-radius:17px}
+  .question-card h1{font-size:20px;line-height:1.38;margin:11px 0 7px;overflow-wrap:anywhere}
+  .answer-list{gap:9px}
+  .answer-choice{min-height:58px;padding:10px 11px;gap:10px;border-radius:14px}
+  .answer-choice>span{width:34px;height:34px;flex:0 0 34px}
+  .answer-choice b{font-size:13px;line-height:1.4;overflow-wrap:anywhere}
+  .quiz-actions{margin:10px 2px}
+  .quiz-bottom{position:sticky;bottom:76px;padding:16px 0 10px;z-index:11}
+  .quiz-bottom-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px}
+  .quiz-bottom-actions button{min-width:0;min-height:54px;padding:12px 9px;font-size:12px;border-radius:13px}
+  .study-bottom-nav{z-index:25}
+}
