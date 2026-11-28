@@ -34,7 +34,7 @@ export default function Home(){
  const scopedQuestions=useMemo(()=>questions.filter(q=>q.subject===subject&&q.section===sectionOpen&&q.subsection===activeSubsection),[subject,sectionOpen,activeSubsection]);
  const practiceSet=quizQuestionIds.length?questions.filter(x=>quizQuestionIds.includes(x.id)):filtered;
  const q=practiceSet[qIndex%Math.max(practiceSet.length,1)];
- const startQuiz=(ids?:number[])=>{setQuizQuestionIds(ids??[]);setQIndex(0);setSelected(null);setSubmitted(false);setLifelineUsed(false);setHiddenOptions([]);setPage("Practice")};
+ const startQuiz=()=>{setQuizQuestionIds([]);setQIndex(0);setSelected(null);setSubmitted(false);setLifelineUsed(false);setHiddenOptions([]);setPage("Practice")};
  const next=()=>{if(q&&submitted){setQIndex((qIndex+1)%Math.max(filtered.length,1));setSelected(null);setSubmitted(false)}};
  const submit=async()=>{if(selected===null||!q)return;setSubmitted(true);const id=Date.now(),correct=selected===q.answer;const record:Attempt={id,subject:q.subject,topic:q.topic,correct,date:new Date().toLocaleDateString("en-IN"),question:q.question,selected};setAttempts(a=>[record,...a]);try{const supabase=createClient();const {data:{user}}=await supabase.auth.getUser();if(user){const {error}=await supabase.from("practice_records").insert({user_id:user.id,record_type:"attempt",question_key:String(q.id),question_snapshot:q,selected_option:selected,is_correct:correct,answered_at:new Date(id).toISOString()});if(error)throw error;setSyncStatus("Cloud sync active");}}catch{setSyncStatus("Saved on this device · cloud sync pending");}};
  const accuracy=attempts.length?Math.round(attempts.filter(a=>a.correct).length/attempts.length*100):0;
