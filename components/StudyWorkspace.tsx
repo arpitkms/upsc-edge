@@ -53,7 +53,7 @@ useEffect(()=>{let live=true;(async()=>{
         answer:["A","B","C","D"].indexOf(correct), explanation:String(r.explanation??""), commonTrap:String(r.common_trap??""), optionAnalysis:String(r.option_analysis??""), referenceSources:Array.isArray(r.reference_sources)?r.reference_sources.map(String):[],
         source:String(r.source??""),
         kind:r.question_type==="pyq"?"pyq":"practice", examYear:r.exam_year??undefined,
-        examLabel:r.question_type==="practice" ? (String(r.source??"").match(/exam attribution printed in book:\s*(.+)$/i)?.[1]?.trim() || "") : undefined
+        examLabel:r.question_type==="practice" ? (String(r.source??"").match(/exam attribution printed in book:\s*(.+)$/i)?.[1]?.trim() || (/^UPSC Edge original practice/i.test(String(r.source??"")) ? "UPSC Edge Original Practice" : "Exam attribution not listed in source")) : undefined
       };
     }).filter((q:Q)=>q.question.length>0 && (q.options.length===4 || q.options.length===5) && q.answer>=0);
     if(live) {
