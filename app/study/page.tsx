@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import "./study.css";
 
-type Q={id:string;subject:string;section:string;subsection:string;topic:string;difficulty:string;question:string;options:string[];answer:number;explanation:string;source:string};
+type Q={id:string;subject:string;section:string;subsection:string;topic?:string;difficulty:string;question:string;options:string[];answer:number;explanation:string;source:string};
 const seedBank:Q[]=[
 {id:"1",subject:"Geography",section:"India: General Introduction & Boundaries",subsection:"Area & Extent of India",difficulty:"Easy",question:"What is the total area of India?",options:["32,87,263 sq km","30,87,263 sq km","33,28,763 sq km","31,66,414 sq km"],answer:0,explanation:"India covers approximately 3.287 million square kilometres (32,87,263 sq km), making it the seventh-largest country by area.",source:"Practice · based on the question shown in your reference"},
 {id:"2",subject:"Polity",section:"Constitutional Framework",subsection:"Preamble",difficulty:"Easy",question:"Which words were added to the Preamble by the 42nd Constitutional Amendment Act, 1976?",options:["Justice, Liberty and Equality","Socialist, Secular and Integrity","Sovereign, Democratic and Republic","Unity, Fraternity and Dignity"],answer:1,explanation:"The 42nd Amendment Act, 1976 added Socialist, Secular and Integrity to the Preamble.",source:"Practice question · not verified as a PYQ"},
