@@ -70,3 +70,25 @@
 .theme-dark .points-grid strong{color:#9db5ff}
 .theme-dark .points-grid span,.theme-dark .arshika-points-card>p{color:#a9b8cc}
 @media(max-width:680px){.points-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.points-grid>div{padding:12px}.points-grid strong{font-size:22px}}
+
+/* Arshika League, profile personalisation and test controls */
+.study-header{position:relative}.study-header-right{gap:14px}
+.profile-menu-trigger{border:1px solid var(--line);background:#f7f9fd;color:var(--ink);border-radius:999px;padding:10px 14px;font-weight:700}
+.profile-popover{position:absolute;z-index:80;right:28px;top:62px;width:min(340px,calc(100vw - 28px));background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px #15213b24;padding:18px;display:grid;gap:12px}
+.profile-popover-title{font:800 15px Manrope,sans-serif}.profile-popover label{display:grid;gap:6px;font-size:11px;color:var(--muted);font-weight:700}
+.profile-popover input{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:11px 12px;border-radius:9px;font:inherit}
+.profile-popover>button{border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:10px 12px;border-radius:9px;text-align:left}
+.profile-popover .profile-save{background:var(--blue);color:white;border-color:var(--blue);text-align:center;font-weight:700}.profile-popover .profile-logout{color:#c24141}
+.profile-preview{margin:0;padding:10px;background:var(--blue-soft);border-radius:9px;color:var(--blue);font-weight:700}
+.end-test-button{background:#fff1f1!important;color:#b83232!important;border:1px solid #f4cccc!important;border-radius:9px;padding:9px 13px;font-weight:700}
+.league-wrap{max-width:1180px}.league-level-card{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.league-level-card h2{font:800 34px Manrope,sans-serif;margin:7px 0}.league-rank-mark{width:72px;height:72px;display:grid;place-items:center;border-radius:22px;background:var(--blue-soft);color:var(--blue);font-size:36px}
+.league-challenge{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 10px}.league-challenge div{display:grid;gap:4px}
+.league-challenge span{font-size:11px;color:var(--muted)}.league-challenge strong{white-space:nowrap;color:var(--blue)}
+.league-badge{padding:10px 12px;margin:9px 0;border:1px solid var(--line);border-radius:10px;background:var(--blue-soft);color:var(--blue);font-weight:700}
+.league-badge.locked{background:var(--bg);color:var(--muted);font-weight:500}
+.league-back{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:11px 15px;border-radius:10px;font-weight:700}
+.theme-dark .profile-menu-trigger,.theme-dark .profile-popover>button{background:#1b2c49;color:#e8eef8;border-color:#304567}
+.theme-dark .profile-popover input{background:#13223b;color:#e8eef8;border-color:#304567}.theme-dark .profile-preview{background:#23385c;color:#b8caff}
+.theme-dark .end-test-button{background:#3b2228!important;color:#ffb6b6!important;border-color:#63333a!important}
+@media(max-width:680px){.study-header{padding:0 14px}.study-header-right>span{font-size:10px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.profile-popover{right:10px;top:58px}.quiz-toolbar{gap:8px}.end-test-button{padding:8px 9px;font-size:11px}.league-level-card h2{font-size:27px}.league-rank-mark{width:56px;height:56px}}
