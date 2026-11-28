@@ -1,4 +1,5 @@
 name: Build and deploy UPSC Edge
+# Production redeploy: Art & Culture PYQ bank data is now populated in Supabase.
 
 on:
   push:
