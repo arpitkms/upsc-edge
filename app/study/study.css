@@ -92,3 +92,5 @@
 .theme-dark .profile-popover input{background:#13223b;color:#e8eef8;border-color:#304567}.theme-dark .profile-preview{background:#23385c;color:#b8caff}
 .theme-dark .end-test-button{background:#3b2228!important;color:#ffb6b6!important;border-color:#63333a!important}
 @media(max-width:680px){.study-header{padding:0 14px}.study-header-right>span{font-size:10px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.profile-popover{right:10px;top:58px}.quiz-toolbar{gap:8px}.end-test-button{padding:8px 9px;font-size:11px}.league-level-card h2{font-size:27px}.league-rank-mark{width:56px;height:56px}}
+
+@media(max-width:680px){.study-bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))}}
