@@ -22,7 +22,8 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  const { data: { claims } } = await supabase.auth.getClaims();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const claims = claimsData?.claims;
   const isPublic = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/auth");
   if (!claims && !isPublic) {
     const redirectUrl = request.nextUrl.clone();
