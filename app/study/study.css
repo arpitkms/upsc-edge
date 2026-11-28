@@ -165,3 +165,5 @@
   .quiz-bottom-actions button{min-width:0;min-height:54px;padding:12px 9px;font-size:12px;border-radius:13px}
   .study-bottom-nav{z-index:25}
 }
+
+/* Production deployment trigger: mobile quiz layout and exam attribution release */
