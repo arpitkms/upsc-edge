@@ -50,7 +50,7 @@ export default function Home(){
  const milestoneDays=[1,7,15,30,50,75,100,150,200,250,365,500,750,1000];
  const milestoneLabels=["First study day","7-day weekly streak","15-day consistency","30-day monthly streak","50-day discipline","75-day commitment","100-day centurion","150-day scholar","200-day dedication","250-day milestone","365-day year of learning","500-day mastery habit","750-day commitment","1,000-day legend"];
  const dueRevision=revisionPlans;
- const reviewCandidates=attempts.filter(a=>!a.correct||bookmarks.includes(a.id)).map(a=>{const q=questions.find(x=>x.question===a.question);return q?{...q,attemptId:a.id}:null}).filter(Boolean) as (Question&{attemptId:number})[];
+ const reviewCandidates=[...attempts.filter(a=>!a.correct).map(a=>{const q=questions.find(x=>x.question===a.question);return q?{...q,attemptId:a.id}:null}).filter(Boolean),...questions.filter(q=>bookmarks.includes(q.id)).map(q=>({...q,attemptId:0}))] as (Question&{attemptId:number})[];
  const reviewMap=new Map<string,any>();reviewCandidates.forEach(q=>{const old=reviewMap.get(q.question);if(!old||q.attemptId>old.attemptId)reviewMap.set(q.question,q);});
  const revisionQueue=[...reviewMap.values()].map(q=>({...q,plan:dueRevision[q.id]||{dueAt:0,interval:0,repetitions:0}})).sort((a,b)=>a.plan.dueAt-b.plan.dueAt);
  const dueNow=revisionQueue.filter(q=>!q.plan.dueAt||q.plan.dueAt<=Date.now());
