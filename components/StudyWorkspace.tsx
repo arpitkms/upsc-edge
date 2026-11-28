@@ -118,8 +118,7 @@ let currentStreak=0;const todayKey=new Date().toLocaleDateString("en-CA");const 
 if(activityDays.includes(todayKey)||activityDays.includes(yesterday)){let cursor=new Date(activityDays.includes(todayKey)?todayKey+"T12:00:00":yesterday+"T12:00:00");while(activityDays.includes(cursor.toLocaleDateString("en-CA"))){currentStreak++;cursor.setDate(cursor.getDate()-1);}}
 const bestStreak=activityDays.reduce((best:string[],day:string)=>{const last=best[best.length-1];if(last&&Math.round((new Date(day+"T12:00:00").getTime()-new Date(last+"T12:00:00").getTime())/86400000)===1)return [...best,day];return [day];},[] as string[]).length;
 const weekPoints=orderedRecords.filter((r:any)=>Date.now()-new Date(r.at).getTime()<=7*86400000&&r.correct).reduce((n:number,r:any)=>n+1,0);
-const syllabusTopics=Object.values(map).flatMap((m:any)=>m.sections.flatMap((sec:any)=>sec.topics));
-const touchedTopics=new Set(records.filter((r:any)=>r.q?.subsection).map((r:any)=>r.q.subsection));
+const syllabusTopics=Object.entries(map).flatMap(([subj,m]:[string,any])=>m.sections.flatMap((sec:any)=>sec.topics.map((topic:string)=>subj+"::"+topic)));const touchedTopics=new Set(records.filter((r:any)=>r.q?.subsection).map((r:any)=>String(r.q.subject)+"::"+String(r.q.subsection)));
 const syllabusCompletion=syllabusTopics.length?Math.round(new Set(syllabusTopics.filter((t:string)=>touchedTopics.has(t))).size/syllabusTopics.length*100):0;
 
 return <main className={embedded?"study-app study-embedded":"study-app"}>
