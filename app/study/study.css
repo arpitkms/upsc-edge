@@ -27,3 +27,35 @@
 .difficulty-label{display:inline-flex;align-items:center;border-radius:999px;padding:8px 12px;background:#fff2dc;color:#95621b;font-size:10px;font-weight:900;text-transform:capitalize}
 .mcq-label{max-width:100%;background:#e8efff;color:#3459c8}
 @media(max-width:680px){.practice-setup-card{padding:17px;border-radius:15px}.practice-setup-grid{grid-template-columns:1fr;gap:13px}.practice-setup-footer{align-items:stretch;flex-direction:column}.practice-setup-footer button{width:100%;padding:15px}.practice-hint{padding:15px}}
+
+
+/* Dark theme for syllabus, question bank and practice workspace */
+.theme-dark .study-app{background:#0b1220;color:#e7edf7}
+.theme-dark .study-heading h1,.theme-dark .topic-name,.theme-dark .panel-heading b,.theme-dark .question-card h1{color:#edf3ff}
+.theme-dark .study-heading p,.theme-dark .study-kicker,.theme-dark .quiz-breadcrumb,.theme-dark .topic-name small{color:#9aaac0}
+.theme-dark .study-count{background:#1a2a49;color:#8eabff}
+.theme-dark .category-switch button,.theme-dark .section-panel,.theme-dark .topic-panel,.theme-dark .practice-setup-card,.theme-dark .analysis-card,.theme-dark .readiness-card,.theme-dark .question-card,.theme-dark .answer-choice{background:#121e30;border-color:#2a3a52;color:#e4ecf8}
+.theme-dark .category-switch button.active{background:#21345a;border-color:#5876e8;color:#b9caff}
+.theme-dark .section-nav,.theme-dark .topic-row{border-color:#29384e;color:#dce6f4}
+.theme-dark .section-nav.active{background:#1b2b49;color:#c7d6ff}
+.theme-dark .topic-heading{background:linear-gradient(110deg,#1c3471,#3859bb)}
+.theme-dark .topic-foot,.theme-dark .practice-setup-footer{border-color:#29384e}
+.theme-dark .topic-foot b,.theme-dark .practice-setup-footer b,.theme-dark .analysis-card h3{color:#e5edf8}
+.theme-dark .topic-foot button,.theme-dark .practice-setup-grid select{background:#1a2a42;border-color:#344761;color:#e5edf8}
+.theme-dark .practice-hint{background:#142238;border-color:#2a3a52;color:#dce6f4}
+.theme-dark .practice-hint p,.theme-dark .practice-setup-footer span{color:#9aabc0}
+.theme-dark .answer-choice.chosen{background:#1b2c4d;border-color:#6482ee}
+.theme-dark .answer-choice.correct{background:#15372f;border-color:#219b70}
+.theme-dark .answer-choice.wrong{background:#3b2229;border-color:#c65d68}
+.theme-dark .answer-choice>span{background:#26364d;color:#c5d2e4}
+.theme-dark .answer-explanation.correct{background:#15372f;color:#b8e8d2}
+.theme-dark .answer-explanation.review{background:#3a3020;color:#f0d8a8}
+.theme-dark .quiz-toolbar>button{color:#e5edf8}
+.theme-dark .quiz-bottom{background:linear-gradient(transparent,#0b1220 28%)}
+.theme-dark .quiz-meter>div{background:#29384e}
+.theme-dark .study-bottom-nav{background:#111c2d;border-color:#29384e}
+.theme-dark .study-toast{background:#243752}
+.quiz-bottom{z-index:12;bottom:12px;padding:18px 0 12px}
+.quiz-bottom button{min-height:54px}
+@media(max-width:700px){.quiz-bottom{position:sticky;bottom:72px;z-index:30;padding:15px 0 calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,#f3f5f8 22%)}.theme-dark .quiz-bottom{background:linear-gradient(transparent,#0b1220 22%)}.quiz-bottom button{min-height:56px}.practice-setup-grid{grid-template-columns:1fr}.study-embedded .quiz-view{padding-bottom:110px}.theme-dark .study-bottom-nav{bottom:0}}
+@media(min-width:701px){.quiz-bottom{bottom:12px}}
