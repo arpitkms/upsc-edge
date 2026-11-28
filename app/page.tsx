@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 type Question = {id:number;subject:string;topic:string;year:string;difficulty:string;question:string;options:string[];answer:number;explanation:string};
 const questions:Question[]=[
@@ -12,9 +13,9 @@ const questions:Question[]=[
 {id:6,subject:"Environment",topic:"Biodiversity",year:"2023",difficulty:"Easy",question:"The term 'biodiversity hotspot' is most closely associated with which concept?",options:["Areas with high endemism and high habitat loss","Areas with the highest rainfall","Areas with maximum agricultural output","Areas with low human population"],answer:0,explanation:"A biodiversity hotspot must have at least 1,500 endemic vascular plant species and have lost at least 70% of its original habitat."}
 ];
 const subjects=[{name:"Polity",progress:50,color:"#5575e8"},{name:"Ancient & Modern History",progress:50,color:"#17a078"},{name:"Economy",progress:1,color:"#d89a3e"},{name:"Physics & Chemistry",progress:0,color:"#8c70d9"},{name:"Geography",progress:0,color:"#2996b8"},{name:"Environment",progress:0,color:"#67a56c"}];
-type Attempt={id:number;subject:string;topic:string;correct:boolean;date:string;question:string};
+type Attempt={id:number;subject:string;topic:string;correct:boolean;date:string;question:string;selected:number};
 export default function Home(){
- const [page,setPage]=useState("Dashboard"),[subject,setSubject]=useState("All Subjects"),[difficulty,setDifficulty]=useState("All Levels"),[year,setYear]=useState("All Years"),[qIndex,setQIndex]=useState(0),[selected,setSelected]=useState<number|null>(null),[submitted,setSubmitted]=useState(false),[attempts,setAttempts]=useState<Attempt[]>([]),[bookmarks,setBookmarks]=useState<number[]>([]),[filter,setFilter]=useState("All"),[hydrated,setHydrated]=useState(false);
+ const [page,setPage]=useState("Dashboard"),[subject,setSubject]=useState("All Subjects"),[difficulty,setDifficulty]=useState("All Levels"),[year,setYear]=useState("All Years"),[qIndex,setQIndex]=useState(0),[selected,setSelected]=useState<number|null>(null),[submitted,setSubmitted]=useState(false),[attempts,setAttempts]=useState<Attempt[]>([]),[bookmarks,setBookmarks]=useState<number[]>([]),[filter,setFilter]=useState("All"),[hydrated,setHydrated]=useState(false),[syncStatus,setSyncStatus]=useState("Offline mode"),[userEmail,setUserEmail]=useState("");
  useEffect(()=>{try{const saved=localStorage.getItem("upsc-edge-progress-v1");if(saved){const data=JSON.parse(saved);if(Array.isArray(data.attempts))setAttempts(data.attempts);if(Array.isArray(data.bookmarks))setBookmarks(data.bookmarks)}}catch{localStorage.removeItem("upsc-edge-progress-v1")}finally{setHydrated(true)}},[]);
  useEffect(()=>{if(hydrated)localStorage.setItem("upsc-edge-progress-v1",JSON.stringify({attempts,bookmarks,updatedAt:new Date().toISOString()}))},[attempts,bookmarks,hydrated]);
  const filtered=useMemo(()=>questions.filter(q=>(subject==="All Subjects"||q.subject===subject)&&(difficulty==="All Levels"||q.difficulty===difficulty)&&(year==="All Years"||q.year===year)),[subject,difficulty,year]);
