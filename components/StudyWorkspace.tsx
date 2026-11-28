@@ -51,7 +51,7 @@ useEffect(()=>{let live=true;(async()=>{
         topic:String(t?.name??"Uncategorised"), difficulty:String(r.difficulty??"moderate"),
         question:String(r.question_text??""), options:Array.isArray(r.options)?r.options.map(String):[],
         answer:["A","B","C","D"].indexOf(correct), explanation:String(r.explanation??""),
-        source:r.question_type==="pyq" ? "UPSC Pre "+(r.exam_year??"") : String(r.source??"PYQ-based practice"),
+        source:r.question_type==="pyq" ? (r.exam_year ? `UPSC Prelims ${r.exam_year}` : "UPSC Prelims · Year unavailable") : String(r.source??"PYQ-based practice"),
         kind:r.question_type==="pyq"?"pyq":"practice", examYear:r.exam_year??undefined
       };
     }).filter((q:Q)=>q.question.length>0 && q.options.length===4 && q.answer>=0);
