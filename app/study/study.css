@@ -94,3 +94,27 @@
 @media(max-width:680px){.study-header{padding:0 14px}.study-header-right>span{font-size:10px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.profile-popover{right:10px;top:58px}.quiz-toolbar{gap:8px}.end-test-button{padding:8px 9px;font-size:11px}.league-level-card h2{font-size:27px}.league-rank-mark{width:56px;height:56px}}
 
 @media(max-width:680px){.study-bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+
+/* Progressive performance analytics */
+.performance-recent{margin:16px 0;padding:20px}
+.performance-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.performance-section-head h3{margin:0;font:800 15px Manrope,sans-serif}
+.performance-section-head>span{font-size:10px;color:#8995a7}
+.performance-question-row{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-bottom:1px solid #edf0f4}
+.performance-question-row:last-of-type{border-bottom:0}
+.performance-question-row>span{width:25px;height:25px;display:grid;place-items:center;border-radius:8px;font-weight:900;flex-shrink:0}
+.performance-question-row .good{background:#e7f7ef;color:#16865a}.performance-question-row .bad{background:#fff0f0;color:#c64b55}.performance-question-row .neutral{background:#f0f2f5;color:#778397}
+.performance-question-row>div{min-width:0;display:grid;gap:5px}
+.performance-question-row b{font-size:12px;line-height:1.5;color:#283447;font-weight:700}
+.performance-question-row small{font-size:10px;color:#8b96a7}
+.performance-view-more{display:inline-flex;align-items:center;justify-content:center;border:1px solid #dce4f3;background:#f7f9ff;color:#4165d9;border-radius:10px;padding:9px 14px;font-size:11px;font-weight:800;margin-top:12px}
+.performance-more-wrap{display:flex;justify-content:center;margin:4px 0 16px}
+.performance-details{margin-top:12px;border-top:1px solid #e9edf3;padding-top:10px}
+.performance-details summary{cursor:pointer;color:#4265d9;font-size:11px;font-weight:800;list-style:none}
+.performance-details summary::-webkit-details-marker{display:none}
+.performance-details summary:after{content:'＋';float:right}
+.performance-details[open] summary:after{content:'−'}
+.performance-details p{font-size:11px;line-height:1.6;color:#778397}
+.performance-details .readiness-meta{margin-top:12px}
+@media(max-width:680px){.performance-recent{padding:15px}.performance-question-row b{font-size:11px}.analysis-columns{grid-template-columns:1fr}.analysis-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.analysis-card{min-width:0}}
