@@ -25,7 +25,74 @@ const map:Record<string,{sections:{name:string;topics:string[]}[]}>={
 "Current Affairs":{sections:[{name:"National & International",topics:["Government Schemes","Reports & Indices","International Relations","Summits & Organisations"]}]}};export function StudyWorkspace({embedded=false}:{embedded?:boolean}){
 const [bank,setBank]=useState<Q[]>(seedBank),[subject,setSubject]=useState("History"),[section,setSection]=useState("Ancient India"),[subsection,setSubsection]=useState("Buddhism & Jainism"),[ids,setIds]=useState<string[]>([]),[index,setIndex]=useState(0),[answer,setAnswer]=useState<number|null>(null),[checked,setChecked]=useState(false),[saved,setSaved]=useState<string[]>([]),[mode,setMode]=useState<"map"|"quiz"|"result"|"analysis">("map"),[category,setCategory]=useState<"pyq"|"practice">("pyq"),[records,setRecords]=useState<any[]>([]),[responses,setResponses]=useState<any[]>([]),[summary,setSummary]=useState<any[]>([]),[seconds,setSeconds]=useState(0),[period,setPeriod]=useState<"daily"|"weekly"|"monthly">("weekly"),[message,setMessage]=useState("");
 useEffect(()=>{try{const v=localStorage.getItem("upsc-edge-study-records-v2");if(v)setRecords(JSON.parse(v));}catch{}},[]);
-useEffect(()=>{let live=true;(async()=>{try{const sb=createClient();const [{data:rows,error},{data:ts},{data:cs},{data:ss}]=await Promise.all([sb.from("questions").select("id,topic_id,question_text,options,correct_option,explanation,difficulty,source,exam_year,question_type").eq("is_published",true),sb.from("topics").select("id,name,chapter_id"),sb.from("chapters").select("id,name,subject_id"),sb.from("subjects").select("id,name")]);if(error)throw error;const tm=new Map((ts??[]).map((x:any)=>[x.id,x])),cm=new Map((cs??[]).map((x:any)=>[x.id,x])),sm=new Map((ss??[]).map((x:any)=>[x.id,x]));const data:Q[]=(rows??[]).map((r:any)=>{const t=tm.get(r.topic_id),c=t?cm.get(t.chapter_id):null,s=c?sm.get(c.subject_id):null;return{id:String(r.id),subject:String(s?.name??"History"),section:String(c?.name??"Ancient India"),subsection:String(t?.name??"Uncategorised"),topic:String(t?.name??"Ancient History"),difficulty:String(r.difficulty??"Moderate"),question:String(r.question_text??""),options:Array.isArray(r.options)?r.options.map(String):[],answer:["A","B","C","D"].indexOf(String(r.correct_option??"").toUpperCase()),explanation:String(r.explanation??""),source:r.question_type==="pyq"?"UPSC CSE Prelims "+(r.exam_year??"")+" PYQ · "+String(r.source??"verified answer key"):String(r.source??"PYQ-based practice"),kind:r.question_type==="pyq"?"pyq":"practice"};}).filter((q:Q)=>q.options.length===4&&q.answer>=0);if(live&&data.length)setBank(data);const {data:{user}}=await sb.auth.getUser();if(user){const {data:marks}=await sb.from("practice_records").select("question_key").eq("user_id",user.id).eq("record_type","bookmark");if(live)setSaved((marks??[]).map((x:any)=>String(x.question_key)));const {data:cloud}=await sb.from("practice_records").select("question_key,question_snapshot,selected_option,is_correct,answered_at").eq("user_id",user.id).eq("record_type","attempt").order("answered_at");if(live&&cloud?.length){const remote=cloud.map((x:any)=>({id:String(x.question_key),q:x.question_snapshot,selected:Number(x.selected_option),correct:Boolean(x.is_correct),skipped:Number(x.selected_option)<0,time:Number(x.question_snapshot?._attemptTimeSeconds)||0,at:x.answered_at}));setRecords(prev=>{const all=[...prev];remote.forEach((r:any)=>{if(!all.some(a=>a.id===r.id&&a.at===r.at))all.push(r)});localStorage.setItem("upsc-edge-study-records-v2",JSON.stringify(all));return all;});}}}catch{if(live)setMessage("Question bank or progress sync is temporarily unavailable.");}})();return()=>{live=false}},[]);
+useEffect(()=>{let live=true;(async()=>{
+  const sb=createClient();
+  // Load the published question bank independently from the user's private progress.
+  try {
+    const [{data:rows,error:questionError},{data:ts,error:topicError},{data:cs,error:chapterError},{data:ss,error:subjectError}] = await Promise.all([
+      sb.from("questions").select("id,topic_id,question_text,options,correct_option,explanation,difficulty,source,exam_year,question_type").eq("is_published",true),
+      sb.from("topics").select("id,name,chapter_id"),
+      sb.from("chapters").select("id,name,subject_id"),
+      sb.from("subjects").select("id,name")
+    ]);
+    if(questionError) throw questionError;
+    if(topicError) throw topicError;
+    if(chapterError) throw chapterError;
+    if(subjectError) throw subjectError;
+    const tm=new Map((ts??[]).map((x:any)=>[x.id,x]));
+    const cm=new Map((cs??[]).map((x:any)=>[x.id,x]));
+    const sm=new Map((ss??[]).map((x:any)=>[x.id,x]));
+    const data:Q[]=(rows??[]).map((r:any)=>{
+      const t=tm.get(r.topic_id), ch=t?cm.get(t.chapter_id):null, subj=ch?sm.get(ch.subject_id):null;
+      const correct=String(r.correct_option??"").trim().toUpperCase();
+      return {
+        id:String(r.id), subject:String(subj?.name??"Unmapped subject"),
+        section:String(ch?.name??"Unmapped section"), subsection:String(t?.name??"Uncategorised"),
+        topic:String(t?.name??"Uncategorised"), difficulty:String(r.difficulty??"moderate"),
+        question:String(r.question_text??""), options:Array.isArray(r.options)?r.options.map(String):[],
+        answer:["A","B","C","D"].indexOf(correct), explanation:String(r.explanation??""),
+        source:r.question_type==="pyq" ? "UPSC CSE Prelims "+(r.exam_year??"")+" PYQ · "+String(r.source??"") : String(r.source??"PYQ-based practice"),
+        kind:r.question_type==="pyq"?"pyq":"practice"
+      };
+    }).filter((q:Q)=>q.question.length>0 && q.options.length===4 && q.answer>=0);
+    if(live) {
+      setBank(data);
+      setMessage(data.length ? "" : "Supabase connected, but no published questions with four options and a valid A–D answer were returned.");
+    }
+  } catch(error) {
+    if(live) setMessage("Question bank load failed: "+(error instanceof Error?error.message:"Supabase request error"));
+  }
+
+  // Progress sync is independent: a progress failure must never hide a successfully loaded question bank.
+  try {
+    const {data:{user},error:userError}=await sb.auth.getUser();
+    if(userError) throw userError;
+    if(!user) {
+      if(live) setMessage("Question bank loaded. Sign in to sync bookmarks and attempts across devices.");
+      return;
+    }
+    const [{data:marks,error:bookmarkError},{data:cloud,error:attemptError}] = await Promise.all([
+      sb.from("practice_records").select("question_key").eq("user_id",user.id).eq("record_type","bookmark"),
+      sb.from("practice_records").select("question_key,question_snapshot,selected_option,is_correct,answered_at").eq("user_id",user.id).eq("record_type","attempt").order("answered_at")
+    ]);
+    if(bookmarkError) throw bookmarkError;
+    if(attemptError) throw attemptError;
+    if(live) {
+      setSaved((marks??[]).map((x:any)=>String(x.question_key)));
+      if(cloud?.length) {
+        const remote=cloud.map((x:any)=>({id:String(x.question_key),q:x.question_snapshot,selected:Number(x.selected_option),correct:Boolean(x.is_correct),skipped:Number(x.selected_option)<0,time:Number(x.question_snapshot?._attemptTimeSeconds)||0,at:x.answered_at}));
+        setRecords(prev=>{
+          const all=[...prev];
+          remote.forEach((r:any)=>{if(!all.some(a=>a.id===r.id&&a.at===r.at))all.push(r)});
+          try { localStorage.setItem("upsc-edge-study-records-v2",JSON.stringify(all)); } catch {}
+          return all;
+        });
+      }
+    }
+  } catch(error) {
+    if(live) setMessage("Question bank is available; progress sync failed: "+(error instanceof Error?error.message:"Supabase request error"));
+  }
+})();return()=>{live=false}},[]);
 useEffect(()=>{if(mode!=="quiz"||checked)return;const t=setInterval(()=>setSeconds(x=>x+1),1000);return()=>clearInterval(t)},[mode,checked,index]);
 const sections=map[subject].sections,activeSection=sections.find(s=>s.name===section)??sections[0],catBank=bank.filter(q=>(q.kind??"practice")===category),available=catBank.filter(q=>q.subject===subject&&q.section===section&&q.subsection===subsection),session=ids.map(id=>bank.find(q=>q.id===id)).filter(Boolean) as Q[],current=session[index];
 const chooseSubject=(s:string)=>{setSubject(s);setSection(map[s].sections[0].name);setSubsection(map[s].sections[0].topics[0]);};
