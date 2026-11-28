@@ -1,0 +1,85 @@
+name: Build and deploy UPSC Edge
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upsc-edge-production
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Prepare standalone deployment package
+        run: |
+          test -d .next/standalone || (echo "Next.js standalone output is missing. Configure output: 'standalone' in next.config.ts." && exit 1)
+          mkdir -p .next/standalone/.next
+          cp -r .next/static .next/standalone/.next/static
+          if [ -d public ]; then cp -r public .next/standalone/public; fi
+          tar -czf upsc-edge-release.tar.gz -C .next/standalone .
+
+      - name: Upload production package
+        uses: actions/upload-artifact@v4
+        with:
+          name: upsc-edge-release
+          path: upsc-edge-release.tar.gz
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download production package
+        uses: actions/download-artifact@v4
+        with:
+          name: upsc-edge-release
+
+      - name: Configure SSH
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/upsc_edge_deploy
+          chmod 600 ~/.ssh/upsc_edge_deploy
+          ssh-keyscan -p "${{ secrets.VPS_PORT }}" "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Transfer and activate release
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          RELEASE_ID="$(date -u +%Y%m%d%H%M%S)-${GITHUB_SHA::7}"
+          REMOTE="/var/www/upsc-edge/releases/$RELEASE_ID"
+          ssh -i ~/.ssh/upsc_edge_deploy -p "$VPS_PORT" "$VPS_USER@$VPS_HOST" "mkdir -p '$REMOTE' /var/www/upsc-edge/shared"
+          scp -i ~/.ssh/upsc_edge_deploy -P "$VPS_PORT" upsc-edge-release.tar.gz "$VPS_USER@$VPS_HOST:$REMOTE/"
+          ssh -i ~/.ssh/upsc_edge_deploy -p "$VPS_PORT" "$VPS_USER@$VPS_HOST" "tar -xzf '$REMOTE/upsc-edge-release.tar.gz' -C '$REMOTE' && rm '$REMOTE/upsc-edge-release.tar.gz' && ln -sfn '$REMOTE' /var/www/upsc-edge/current"
+          ssh -i ~/.ssh/upsc_edge_deploy -p "$VPS_PORT" "$VPS_USER@$VPS_HOST" "printf 'NEXT_PUBLIC_SUPABASE_URL=%s\nNEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=%s\nHOSTNAME=127.0.0.1\nPORT=3000\n' '$SUPABASE_URL' '$SUPABASE_KEY' > /var/www/upsc-edge/shared/.env.production && chmod 600 /var/www/upsc-edge/shared/.env.production && chown deploy:deploy /var/www/upsc-edge/shared/.env.production"
+          ssh -i ~/.ssh/upsc_edge_deploy -p "$VPS_PORT" "$VPS_USER@$VPS_HOST" "cd /var/www/upsc-edge/current && pm2 delete upsc-edge >/dev/null 2>&1 || true; cd /var/www/upsc-edge/current && pm2 start server.js --name upsc-edge --interpreter node --update-env --env production && pm2 save"
