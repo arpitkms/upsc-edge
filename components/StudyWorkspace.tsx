@@ -54,7 +54,7 @@ useEffect(()=>{let live=true;(async()=>{
         source:r.question_type==="pyq" ? (r.exam_year ? `UPSC Prelims ${r.exam_year}` : "UPSC Prelims · Year unavailable") : String(r.source??"PYQ-based practice"),
         kind:r.question_type==="pyq"?"pyq":"practice", examYear:r.exam_year??undefined
       };
-    }).filter((q:Q)=>q.question.length>0 && q.options.length===4 && q.answer>=0);
+    }).filter((q:Q)=>q.question.length>0 && (q.options.length===4 || q.options.length===5) && q.answer>=0);
     if(live) {
       setBank(data);
       setMessage(data.length ? "" : "Supabase connected, but no published questions with four options and a valid A–D answer were returned.");
